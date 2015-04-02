@@ -29,9 +29,20 @@ var OpenTokAngular = angular.module('opentok', [])
                     });
                 },
                 streamCreated: function(event) {
-                    $rootScope.$apply(function() {
+                  $rootScope.$apply(function() {
+                    if ((OTSession.streams.length === 0) ||
+                        (OTSession.streams.length > 0 && (function(streams, event) {
+                                var index;
+                                for (index = 0; index < streams.length; index += 1) {
+                                    if (streams[index].id.localeCompare(event.stream.id) === 0) {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            }(OTSession.streams, event)))) {
                         OTSession.streams.push(event.stream);
-                    });
+                    }
+                  });
                 },
                 streamDestroyed: function(event) {
                     $rootScope.$apply(function() {
